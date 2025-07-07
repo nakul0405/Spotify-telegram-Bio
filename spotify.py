@@ -17,7 +17,6 @@ meta = {
 
 ACTIVE_ACCESS_TOKEN = None
 EXPIRATION_TIME = None
-
 UPDATE_INTERVAL = 10
 
 CLIENT_ID = getenv("SPOTIFY_CLIENT_ID")
@@ -28,6 +27,7 @@ BASE_HEADERS = {
     "Content-Type": "application/x-www-form-urlencoded",
     "Authorization": f"Basic {base64.b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()}",
 }
+
 
 async def refresh_token():
     spotify_logger.info("<- Refreshing token ->")
@@ -41,13 +41,23 @@ async def refresh_token():
                 "client_id": CLIENT_ID,
             },
         ) as response:
-            response = await response.json()
+            try:
+                data = await response.json()
+            except Exception as e:
+                spotify_logger.error(f"❌ Failed to parse Spotify token response: {e}")
+                raise
+
+            if "access_token" not in data:
+                spotify_logger.error(f"❌ Spotify token refresh failed: {data}")
+                raise Exception("Spotify did not return access_token")
+
             global ACTIVE_ACCESS_TOKEN
             global EXPIRATION_TIME
-            ACTIVE_ACCESS_TOKEN = response["access_token"]
-            EXPIRATION_TIME = int(response["expires_in"]) + int(time.time())
-    
-    spotify_logger.info("<- Token refreshed ->")    
+            ACTIVE_ACCESS_TOKEN = data["access_token"]
+            EXPIRATION_TIME = int(data["expires_in"]) + int(time.time())
+
+    spotify_logger.info("<- Token refreshed ✅ ->")
+
 
 async def get_current_playing():
     async with ClientSession(timeout=ClientTimeout(total=10)) as session:
@@ -63,27 +73,26 @@ async def get_current_playing():
                 meta["CURRENT_TRACK_TITLE"] = None
                 spotify_logger.info("Not currently playing.")
                 return
-            
-            # if not 200, refresh token
+
+            # if not 200, refresh token and retry
             if response.status != 200:
+                spotify_logger.warning(f"Non-200 from Spotify: {response.status} → Refreshing token...")
                 await refresh_token()
                 return await get_current_playing()
+
             try:
                 data = await response.json()
-                if data["is_playing"]:
+                if data.get("is_playing"):
                     meta["IS_PLAYING"] = True
                     artists = [artist["name"] for artist in data["item"]["album"]["artists"]]
-                    artists_fmt = ", ".join(artists)
-                    artists_fmt = artists_fmt[:100]
-                    meta["CURRENT_TRACK_TITLE"] = data["item"]["name"] + " (" + artists_fmt + ")"
-                    spotify_logger.info(f"Currently playing: {meta['CURRENT_TRACK_TITLE']}")
+                    artists_fmt = ", ".join(artists)[:100]
+                    meta["CURRENT_TRACK_TITLE"] = f"{data['item']['name']} ({artists_fmt})"
+                    spotify_logger.info(f"🎧 Currently playing: {meta['CURRENT_TRACK_TITLE']}")
                 else:
                     meta["IS_PLAYING"] = False
                     meta["CURRENT_TRACK_TITLE"] = None
                     spotify_logger.info("Not currently playing.")
-            except:
+            except Exception as e:
                 meta["IS_PLAYING"] = False
                 meta["CURRENT_TRACK_TITLE"] = None
-                spotify_logger.error("Error parsing JSON response/Not currently playing.")
-                
-                
+                spotify_logger.error(f"Error parsing Spotify response: {e}")
