@@ -56,20 +56,22 @@ pip install -r requirements.txt
 #### Telegram:
 
 * Obtain your `api_id` and `api_hash` from [my.telegram.org](https://my.telegram.org).
+* Gen Session String (Telethon) using Bots ie. [StringSession_GenBot](https://t.me/Stringsession_GenBot)
 
 ---
 
 ## 🧩 Configuration
 
 Populate `config.py` or create an `.env` file with the following values:
-
+Default - Use sample.env
 ```python
-SPOTIFY_CLIENT_ID = "your_spotify_client_id"
-SPOTIFY_CLIENT_SECRET = "your_spotify_client_secret"
-SPOTIFY_REFRESH_TOKEN = "your_spotify_refresh_token"
-
-TELEGRAM_API_ID = 123456  # Integer
-TELEGRAM_API_HASH = "your_telegram_api_hash"
+SPOTIFY_CLIENT_ID=your-spotify-client-id
+SPOTIFY_CLIENT_SECRET=your-spotify-client-secret
+SPOTIFY_REFRESH_TOKEN=your-spotify-refresh-token
+STRING_SESSION=your-string-session
+API_ID=tg-api-id
+API_HASH=tg-api-hash
+DEFAULT_BIO=~
 
 POLL_INTERVAL = 15  # in seconds
 ```
