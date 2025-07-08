@@ -50,8 +50,8 @@ pip install -r requirements.txt
 #### Spotify:
 
 * Create an app at the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
-* Set a redirect URI (e.g., `http://localhost:8888/callback`).
-* Generate a `refresh_token` using the authentication flow.
+* Set a redirect URI (e.g., `https://spotify-refresh-token-generator.netlify.app`).
+* Generate a `refresh_token` using the [ Refresh Token Genrator](https://spotify-refresh-token-generator.netlify.app/).
 
 #### Telegram:
 
@@ -156,7 +156,7 @@ Feel free to fork, modify, and integrate as long as proper attribution is mainta
 
 ## 🌐 Credits
 
-* Creator - [Nakul Rathod](https://t.me/Nakulrathod0405)
+* Creator - [Nakul Rathod](https://t.me/Nakulrathod0405) (Contact If you face any problem or don't know how to deploy the script.)
 * Built using APIs provided by [Spotify for Developers](https://developer.spotify.com) and [Telethon](https://github.com/LonamiWebs/Telethon).
 
 ---
