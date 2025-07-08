@@ -1,8 +1,4 @@
-Certainly. Here's a **refined, professional, and powerful README** with **minimal but meaningful emoji** and elevated language. It maintains a stylish tone with thoughtful word choices and a strong developer-facing voice.
-
----
-
-# 🎧 Spotify–Telegram Bio Updater
+🎧 Spotify–Telegram Bio Updater
 
 **Seamlessly synchronize your Spotify listening activity with your Telegram bio.**
 
